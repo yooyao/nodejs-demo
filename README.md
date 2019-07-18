@@ -22,3 +22,9 @@ nodejs-demo，学习中的小实例
   - 当服务器收到message，就将其进行广播，通过WebSocket Server 的clients 属性（它是已经建立起连接的 WebSocket 数组），将消息转发到每一个客户端。
 - 暂时没有做登录处理，每打开一个页面就是一个用户
 - 由于chatroom是基于上一个koademo来做的，所以混带着很多上一个小demo的内容，后续再整理~
+
+4. nodedemo
+- 根据《node入门》https://www.nodebeginner.org/index-zh-cn.html完成
+- 使用handle 对象作为请求处理的集合，不同的url被映射到对应的处理程序，避免了长串而难看的if else的路由处理方式
+- 强调依赖注入的方式，可以较松散地添加路由模块
+- 实现了node对于post请求的处理，实现了图片的上传和展示
