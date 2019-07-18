@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>WebSocket Chat</title>
+</head>
+
+<body>
+	
+	<form onsubmit="return false;">
+		<h3>WebSocket 聊天室：</h3>
+		<textarea id="responseText" style="width: 500px; height: 300px;"></textarea>
+		<br>
+		<input type="text" id='message' name="message" style="width: 300px" placeholder="say something">
+		<input type="button" id="sentbtn" value="发送消息" >
+		<input type="button" id="clearbtn" value="清空聊天记录">
+	</form>
+	<script type="text/javascript">
+        var socket;
+		var chatWindow = document.getElementById('responseText');
+        
+		if (!window.WebSocket) {
+			window.WebSocket = window.MozWebSocket;
+		}
+		if (window.WebSocket) {
+			socket = new WebSocket("ws://localhost:3000");
+            
+            socket.onopen = function (event) {
+				chatWindow.value = "连接开启!";
+            };
+            
+            socket.onmessage = function (event) {
+				chatWindow.value = chatWindow.value + '\n' + event.data
+			};
+			
+			socket.onclose = function (event) {
+				chatWindow.value = chatWindow.value +'\n'+ "连接被关闭";
+			};
+		} else {
+			alert("你的浏览器不支持 WebSocket！");
+		}
+
+        var sentbtn = document.getElementById('sentbtn');
+        sentbtn.addEventListener('click',send)
+        
+        var clearbtn = document.getElementById('clearbtn');
+        clearbtn.addEventListener('click',()=>{
+            chatWindow.value = '';
+        })
+
+    	function send() {
+            var message = document.getElementById("message").value;
+			if (!window.WebSocket) {
+				return;
+			}
+			if (socket.readyState == WebSocket.OPEN) {
+				socket.send(message);
+			} else {
+				alert("连接没有开启.");
+			}
+		}
+	</script>
+</body>
+
+</html>
