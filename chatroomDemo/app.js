@@ -21,12 +21,13 @@ app.use(async (ctx, next) => {
     await next();
 });
 
-// // parse user from cookie:
-// // 保存在ctx.state 
-// app.use(async (ctx, next) => {
-//     ctx.state.user = parseUser(ctx.cookies.get('name') || '');
-//     await next();
-// });
+// parse user from cookie:
+// 保存在ctx.state 
+app.use(async (ctx, next) => {
+    ctx.state.user = ctx.cookies.get('username') || '';
+    // ctx.state.user = parseUser(ctx.cookies.get('username') || '');
+    await next();
+});
 
 app.use(staticFiles('/static/',__dirname+'/static'));
 
