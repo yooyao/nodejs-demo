@@ -17,16 +17,16 @@ const app = new Koa();
 
 // log request URL:
 app.use(async (ctx, next) => {
-    console.log(`Process ${ctx.request.method} ${ctx.request.url}...`);
+    console.log(`Process request ${ctx.request.method} ${ctx.request.url}...`);
     await next();
 });
 
-// parse user from cookie:
-// 保存在ctx.state 
-app.use(async (ctx, next) => {
-    ctx.state.user = parseUser(ctx.cookies.get('name') || '');
-    await next();
-});
+// // parse user from cookie:
+// // 保存在ctx.state 
+// app.use(async (ctx, next) => {
+//     ctx.state.user = parseUser(ctx.cookies.get('name') || '');
+//     await next();
+// });
 
 app.use(staticFiles('/static/',__dirname+'/static'));
 
@@ -47,31 +47,31 @@ app.use(controller());
 let server = app.listen(3000);
 // console.log('server', server);
 
-//解析用户
-function parseUser(obj) {
-    if (!obj) {
-        return;
-    }
-    console.log('try parse: ' + obj);
-    let s = '';
-    if (typeof obj === 'string') {
-        s = obj;
-    } else if (obj.headers) {
-        //传入的是request请求对象
+// //解析用户????暂时没用上解析用户，解析的目的是啥
+// function parseUser(obj) {
+//     if (!obj) {
+//         return;
+//     }
+//     console.log('try parse: ' + obj);
+//     let s = '';
+//     if (typeof obj === 'string') {
+//         s = obj;
+//     } else if (obj.headers) {
+//         //传入的是request请求对象
 
-        let cookies = new Cookies(obj, null);
-        s = cookies.get('name');
-    }
-    if (s) {
-        try {
-            let user = JSON.parse(Buffer.from(s, 'base64').toString());
-            console.log(`User: ${user.name}, ID: ${user.id}`);
-            return user;
-        } catch (e) {
-            // ignore
-        }
-    }
-}
+//         let cookies = new Cookies(obj, null);
+//         s = cookies.get('name');
+//     }
+//     if (s) {
+//         try {
+//             let user = JSON.parse(Buffer.from(s, 'base64').toString());
+//             console.log(`User: ${user.name}, ID: ${user.id}`);
+//             return user;
+//         } catch (e) {
+//             // ignore
+//         }
+//     }
+// }
 
 
 //websocketServer实例化
@@ -83,6 +83,16 @@ function parseUser(obj) {
 const wss = new WebSocketServer({
     server:server
 })
+   
+//wss扩展方法，广播给所有连接的客户端
+wss.broadcast = data =>{
+    //WebSocket Server 的clients 属性，它是已经建立起连接的 WebSocket 数组
+    wss.clients.forEach(function each(client){
+        if(client.readyState === WebSocket.OPEN){
+            client.send(data)
+        }
+    });
+}
 
 wss.on('open', function open() {
     console.log('connected');
@@ -93,25 +103,19 @@ wss.on('close', function close() {
 });
 
 wss.on('connection', function connection(ws, req){
-    //ws是对某个client建立起来的websocket链接
+    //ws是对某个client建立起来的websocket链接,wss是服务端的整个websocket服务
     const ip = req.connection.remoteAddress;
     const port = req.connection.remotePort;
     const clientName = ip + port;
 
     console.log(clientName,' is connected');
 
-    ws.send("Welcome"+clientName);
+    wss.broadcast("Welcome"+clientName);
 
+    //接收到来自客户端的消息后便广播到全部客户端
     ws.on('message', function incoming(message){
         console.log(`received: ${message} from ${clientName} `);
-
-        //广播给所有客户端
-        //WebSocket Server 的clients 属性，它是已经建立起连接的 WebSocket 数组
-        wss.clients.forEach(function each(client){
-            if(client.readyState === WebSocket.OPEN){
-                client.send(clientName+":"+message)
-            }
-        });
+        wss.broadcast(clientName+":"+message)
     });
 });
 

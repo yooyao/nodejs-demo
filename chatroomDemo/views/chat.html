@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %} 
 
-<head>
-	<meta charset="UTF-8">
-	<title>WebSocket Chat</title>
-</head>
-
-<body>
-	
+{% block main %}
 	<form onsubmit="return false;">
 		<h3>WebSocket 聊天室：</h3>
 		<textarea id="responseText" style="width: 500px; height: 300px;"></textarea>
@@ -16,6 +9,7 @@
 		<input type="button" id="sentbtn" value="发送消息" >
 		<input type="button" id="clearbtn" value="清空聊天记录">
 	</form>
+	
 	<script type="text/javascript">
         var socket;
 		var chatWindow = document.getElementById('responseText');
@@ -61,6 +55,4 @@
 			}
 		}
 	</script>
-</body>
-
-</html>
+{% endblock %}
