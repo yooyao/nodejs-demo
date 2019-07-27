@@ -14,13 +14,13 @@ nodejs-demo，学习中的小实例
 - 实现了一个简单地用户登录功能，用来作为处理post请求的练习
 
 3. chatroom
-- 基于websocket实现了一个群聊页面，关键内容在app.js中的websocket链接对象（注意区分ws和wss，ws是一个websocket链接对象（与一客户端建立气的链接），wss是websocket服务器对象），chat.js路由处理函数，chat.html是客户端页面
-- websocketServer监听的端口和httpServer是同一个，不会相互影响
+- 基于先前的实现的koa项目来制作聊天室，可以方便的通过MVC开发模式，完成前后端的工作。
+- 聊天室具有简单的用户登录和群聊功能。
 - 群聊思路：
   - 通过建立ws中的connection事件中的 req请求对象中的属性来获取建立连接的对象的信息（const ip = req.connection.remoteAddress;
     const port = req.connection.remotePort），来对每个客户端连接进行区分
   - 当服务器收到message，就将其进行广播，通过WebSocket Server 的clients 属性（它是已经建立起连接的 WebSocket 数组），将消息转发到每一个客户端。
-- 暂时没有做登录处理，每打开一个页面就是一个用户
+- 登录写死了账户，暂时没有调用数据库
 - 由于chatroom是基于上一个koademo来做的，所以混带着很多上一个小demo的内容，后续再整理~
 
 4. nodedemo
