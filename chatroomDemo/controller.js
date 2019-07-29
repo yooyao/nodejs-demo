@@ -21,7 +21,8 @@ function addmapping (router, mapping){
 
 //扫描controllers目录
 function addControllers(router, dir){
-    //readdirSync列出文件， 这里可以用sync是因为启动时只运行一次，不存在性能问题:
+    //readdirSync列出文件， 这里可以用sync是因为启动时只运行一次，不存在性能问题
+    //启动应用时app.use(controller())来运行，初始化应用的时候运行函数，结束之后返回一个router.routes()，controller只会运行一次
     var files = fs.readdirSync(__dirname + '/' + dir);
 
     //过滤出每个js文件

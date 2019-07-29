@@ -45,7 +45,7 @@ const fn_login = async (ctx, next)=>{
                 maxAge: 300000,  //以毫秒为单位
                 expires: date
             }
-        );
+        );        
         console.log(`ctx.cookies ${ctx.cookies.get('username')}`);
 
         ctx.response.redirect('/chat')
