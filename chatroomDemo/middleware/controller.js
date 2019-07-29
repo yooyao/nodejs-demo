@@ -21,9 +21,10 @@ function addmapping (router, mapping){
 
 //扫描controllers目录
 function addControllers(router, dir){
+    
     //readdirSync列出文件， 这里可以用sync是因为启动时只运行一次，不存在性能问题
     //启动应用时app.use(controller())来运行，初始化应用的时候运行函数，结束之后返回一个router.routes()，controller只会运行一次
-    var files = fs.readdirSync(__dirname + '/' + dir);
+    var files = fs.readdirSync(dir);
 
     //过滤出每个js文件
     var js_files = files.filter((item)=>{
@@ -33,14 +34,14 @@ function addControllers(router, dir){
 
     for(var f of js_files){
         //导入各个文件对象
-        var mapping = require(__dirname+'/'+dir+'/'+f);
+        var mapping = require(dir+'/'+f);
         addmapping(router, mapping);
     }
 }
 
-module.exports = function (dir) {
+module.exports = function (dirname, foldername) {
     let 
-        controllers_dir = dir || 'controllers',  //不传入dir则默认使用controllers
+        controllers_dir =dirname + (foldername || 'controllers'),  //不传入dir则默认使用controllers
         router = require('koa-router')();
     addControllers(router, controllers_dir);
     return router.routes();
